@@ -85,7 +85,7 @@ export const ZOOM_CONFIG: Record<string, ZoomLevelConfig> = {
   [ZOOM_LEVELS.BY_DAYS]: {
     pixelsPerDay: 200,       // ~1500px per month - daily granularity
     minDurationDays: 1,     // Single day minimum
-    paddingDays: 1,         // Minimal spacing (1 day)
+    paddingDays: 0,         // Minimal spacing (1 day)
     minWidthPx: 200,         // Minimum one day width
     heightPx: 56,           // Standard height
     rowHeightPx: 68,        // Standard row spacing

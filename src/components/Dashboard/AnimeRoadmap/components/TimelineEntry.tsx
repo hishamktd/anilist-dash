@@ -39,7 +39,7 @@ export function TimelineEntry({ entry, leftPx, widthPx, topPx, zoomLevel }: Time
 
   return (
     <div
-      className="absolute group"
+      className="absolute group pr-2"
       style={{
         top: `${topPx}px`,
         left: `${leftPx}px`,
@@ -62,7 +62,7 @@ export function TimelineEntry({ entry, leftPx, widthPx, topPx, zoomLevel }: Time
 
         <div className="flex items-center h-full gap-2 relative">
           {/* Sticky Header Section */}
-          <div className="sticky -left-4 flex items-center gap-2 bg-gradient-to-r from-[#0f172a99] to-transparent pr-8 pl-2 py-2 rounded-l-lg z-10 max-w-[280px] overflow-hidden">
+          <div className="sticky -left-4 flex items-center gap-2 bg-gradient-to-r from-[#0f172a20] to-transparent pr-8 pl-2 py-2 rounded-l-lg z-10 max-w-[280px] overflow-hidden">
             <img
               src={entry.coverImage}
               alt={entry.title}

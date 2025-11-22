@@ -102,6 +102,7 @@ export const metadata: Metadata = {
 
 import { Providers } from "@/components/Providers";
 import { NProgressBar } from "@/components/NProgressBar";
+import { Analytics } from "@vercel/analytics/next"
 
 export default function RootLayout({
   children,
@@ -115,6 +116,7 @@ export default function RootLayout({
       >
         <NProgressBar />
         <SpeedInsights />
+        <Analytics />
         <Providers>
           {children}
         </Providers>
