@@ -29,7 +29,7 @@ export function LandingPage() {
         <div className="animate-fade-in-up delay-100">
           <button
             onClick={() => signIn("anilist")}
-            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold text-lg transition-all hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.8)]"
           >
             <Play className="w-5 h-5 fill-current" />
             Connect with AniList
@@ -70,8 +70,8 @@ export function LandingPage() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="glass-card p-6 rounded-2xl text-left hover:bg-white/5 transition-colors group">
-      <div className="mb-4 p-3 bg-white/5 rounded-xl w-fit group-hover:scale-110 transition-transform">
+    <div className="glass-card p-6 rounded-2xl text-left hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/20 transition-all group border border-white/5 hover:border-blue-400/40">
+      <div className="mb-4 p-3 bg-white/5 rounded-xl w-fit transition-colors group-hover:bg-white/10">
         {icon}
       </div>
       <h3 className="text-xl font-bold mb-2 text-white">{title}</h3>

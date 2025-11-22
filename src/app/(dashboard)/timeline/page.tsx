@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { anilistClient, GRAPHQL_QUERIES, setAnilistToken } from "@/lib/anilist";
+import { GRAPHQL_QUERIES, setAnilistToken, rateLimitedRequest } from "@/lib/anilist";
 import { AnimeRoadmap } from "@/components/Dashboard/AnimeRoadmap";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Calendar } from "lucide-react";
@@ -9,22 +9,21 @@ async function getTimelineData(accessToken: string) {
   setAnilistToken(accessToken);
 
   // Fetch Viewer to get userId
-  const viewerData: any = await anilistClient.request(GRAPHQL_QUERIES.VIEWER);
+  const viewerData: any = await rateLimitedRequest(GRAPHQL_QUERIES.VIEWER);
   const userId = viewerData.Viewer.id;
 
-  // Fetch both watching and completed anime
-  const [watchingData, completedData]: [any, any] = await Promise.all([
-    anilistClient.request(GRAPHQL_QUERIES.MEDIA_LIST, {
-      userId,
-      type: "ANIME",
-      status: "CURRENT",
-    }),
-    anilistClient.request(GRAPHQL_QUERIES.MEDIA_LIST, {
-      userId,
-      type: "ANIME",
-      status: "COMPLETED",
-    }),
-  ]);
+  // Fetch both watching and completed anime sequentially to avoid rate limiting
+  const watchingData: any = await rateLimitedRequest(GRAPHQL_QUERIES.MEDIA_LIST, {
+    userId,
+    type: "ANIME",
+    status: "CURRENT",
+  });
+
+  const completedData: any = await rateLimitedRequest(GRAPHQL_QUERIES.MEDIA_LIST, {
+    userId,
+    type: "ANIME",
+    status: "COMPLETED",
+  });
 
   // Combine entries from both lists
   const watchingEntries =

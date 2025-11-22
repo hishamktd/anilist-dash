@@ -40,14 +40,14 @@ export function RecommendationsWidget({ recommendations }: RecommendationsWidget
         {topRecommendations.map((rec) => (
           <div
             key={rec.id}
-            className="group relative overflow-hidden rounded-lg bg-gray-800 border border-gray-700 hover:border-yellow-500 transition-all duration-300 cursor-pointer"
+            className="group relative overflow-hidden rounded-lg bg-gray-800 border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/30 transition-all duration-300 cursor-pointer"
           >
             <div className="aspect-[2/3] relative">
               <Image
                 src={rec.mediaRecommendation.coverImage.large}
                 alt={rec.mediaRecommendation.title.romaji}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                className="object-cover"
               />
               {rec.mediaRecommendation.averageScore && (
                 <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">

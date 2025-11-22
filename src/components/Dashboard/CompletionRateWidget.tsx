@@ -77,7 +77,7 @@ export function CompletionRateWidget({ statuses }: CompletionRateWidgetProps) {
 
             {/* Center text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="text-5xl font-black bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+              <div className="text-2xl font-black bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
                 {completionRate.toFixed(1)}%
               </div>
               <div className="text-sm text-gray-400 mt-1">Completed</div>

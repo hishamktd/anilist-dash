@@ -41,14 +41,14 @@ export function FavoriteCharacters({ characters }: FavoriteCharactersProps) {
         {characters.slice(0, 10).map((character) => (
           <div
             key={character.id}
-            className="group relative overflow-hidden rounded-lg bg-gray-800 border border-gray-700 hover:border-pink-500 transition-all duration-300 cursor-pointer"
+            className="group relative overflow-hidden rounded-lg bg-gray-800 border border-gray-700 hover:border-pink-500 hover:shadow-lg hover:shadow-pink-500/30 transition-all duration-300 cursor-pointer"
           >
             <div className="aspect-[2/3] relative">
               <Image
                 src={character.image.large}
                 alt={character.name.full}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">

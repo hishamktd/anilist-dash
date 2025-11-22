@@ -99,9 +99,9 @@ export function StatsCards({ stats }: StatsProps) {
       {cards.map((card, index) => (
         <div
           key={card.label}
-          className="glass-card group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+          className="glass-card group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20"
         >
-          <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${card.gradient} opacity-10 blur-2xl transition-all group-hover:opacity-20`} />
+          <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${card.gradient} opacity-10 blur-2xl transition-all duration-500 group-hover:opacity-30 group-hover:scale-150`} />
           
           <div className="flex items-center space-x-4">
             <div className={`rounded-xl bg-gradient-to-br ${card.gradient} p-3 shadow-lg`}>

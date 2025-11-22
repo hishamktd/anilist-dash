@@ -373,14 +373,14 @@ export function AnimeRoadmap({ entries }: AnimeRoadmapProps) {
                   >
                     {/* Anime Bar */}
                     <div
-                      className={`h-full w-full rounded-lg shadow-xl cursor-pointer transition-all duration-300 hover:z-10 hover:shadow-2xl hover:scale-105 overflow-hidden relative border ${
+                      className={`h-full w-full rounded-lg shadow-xl cursor-pointer transition-all duration-300 hover:z-10 hover:shadow-2xl overflow-hidden relative border ${
                         isCompleted
-                          ? "bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 border-green-400/30 hover:shadow-green-500/50"
-                          : "bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 border-blue-400/30 hover:shadow-blue-500/50"
+                          ? "bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 border-green-400/30 hover:shadow-green-500/50 hover:border-green-400/60"
+                          : "bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 border-blue-400/30 hover:shadow-blue-500/50 hover:border-blue-400/60"
                       }`}
                     >
                       {/* Glossy overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/20 pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/20 pointer-events-none transition-opacity duration-300 group-hover:from-white/30" />
 
                       {/* Indicator for currently watching (ongoing) */}
                       {isCurrent && !entry.endDate && (

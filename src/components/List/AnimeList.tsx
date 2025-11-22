@@ -19,7 +19,7 @@ export function AnimeList({ entries, status }: AnimeListProps) {
         {entries.map((entry) => (
           <div
             key={entry.id}
-            className="group relative overflow-hidden rounded-lg bg-gray-900 shadow-md transition-transform hover:scale-105"
+            className="group relative overflow-hidden rounded-lg bg-gray-900 shadow-md transition-all hover:shadow-xl hover:shadow-blue-500/30 border border-white/5 hover:border-blue-400/40"
           >
             <div className="aspect-[2/3] w-full overflow-hidden">
               <img

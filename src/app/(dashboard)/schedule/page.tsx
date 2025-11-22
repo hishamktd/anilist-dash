@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { anilistClient, GRAPHQL_QUERIES, setAnilistToken } from "@/lib/anilist";
+import { GRAPHQL_QUERIES, setAnilistToken, rateLimitedRequest } from "@/lib/anilist";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Calendar, Clock } from "lucide-react";
 import Image from "next/image";
@@ -11,7 +11,7 @@ async function getAiringSchedule(accessToken: string) {
   const now = Math.floor(Date.now() / 1000);
   const weekFromNow = now + 7 * 24 * 60 * 60;
 
-  const data: any = await anilistClient.request(GRAPHQL_QUERIES.AIRING_SCHEDULE, {
+  const data: any = await rateLimitedRequest(GRAPHQL_QUERIES.AIRING_SCHEDULE, {
     airingAt_greater: now,
     airingAt_lesser: weekFromNow,
     page: 1,

@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { anilistClient, GRAPHQL_QUERIES, setAnilistToken } from "@/lib/anilist";
+import { GRAPHQL_QUERIES, setAnilistToken, rateLimitedRequest } from "@/lib/anilist";
 import { StatsCards } from "@/components/Dashboard/StatsCards";
 import { ActivityHeatmap } from "@/components/Dashboard/ActivityHeatmap";
 import { Timeline } from "@/components/Dashboard/Timeline";
@@ -26,37 +26,42 @@ import { AnimeMilestones } from "@/components/Dashboard/AnimeMilestones";
 import { ScoreComparison } from "@/components/Dashboard/ScoreComparison";
 import { StaffWidget } from "@/components/Dashboard/StaffWidget";
 import { MonthlyActivityChart } from "@/components/Dashboard/MonthlyActivityChart";
-import { QuickStats } from "@/components/Dashboard/QuickStats";
 import { LandingPage } from "@/components/LandingPage";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 async function getDashboardData(accessToken: string) {
   setAnilistToken(accessToken);
 
-  // Fetch Viewer and Stats
-  const viewerData: any = await anilistClient.request(GRAPHQL_QUERIES.VIEWER);
+  // Fetch Viewer and Stats first
+  const viewerData: any = await rateLimitedRequest(GRAPHQL_QUERIES.VIEWER);
   const userId = viewerData.Viewer.id;
 
-  // Fetch all data in parallel for better performance
-  const [activityData, favoriteCharacters, currentWatching, trendingAnime, recommendations] = await Promise.all([
-    anilistClient.request(GRAPHQL_QUERIES.USER_ACTIVITY, {
-      userId,
-      page: 1,
-      perPage: 500,
-    }),
-    anilistClient.request(GRAPHQL_QUERIES.FAVORITE_CHARACTERS, { userId }).catch(() => ({ User: { favourites: { characters: { nodes: [] } } } })),
-    anilistClient.request(GRAPHQL_QUERIES.CURRENT_WATCHING, { userId }).catch(() => ({ MediaListCollection: { lists: [] } })),
-    anilistClient.request(GRAPHQL_QUERIES.TRENDING_ANIME, { page: 1, perPage: 10 }).catch(() => ({ Page: { media: [] } })),
-    anilistClient.request(GRAPHQL_QUERIES.RECOMMENDATIONS, { userId }).catch(() => ({ User: { recommendations: { nodes: [] } } })),
-  ]);
+  // Fetch remaining data sequentially to avoid rate limiting
+  const activityData: any = await rateLimitedRequest(GRAPHQL_QUERIES.USER_ACTIVITY, {
+    userId,
+    page: 1,
+    perPage: 500,
+  }).catch(() => ({ Page: { activities: [] } }));
+
+  const favoriteCharacters: any = await rateLimitedRequest(GRAPHQL_QUERIES.FAVORITE_CHARACTERS, { userId })
+    .catch(() => ({ User: { favourites: { characters: { nodes: [] } } } }));
+
+  const currentWatching: any = await rateLimitedRequest(GRAPHQL_QUERIES.CURRENT_WATCHING, { userId })
+    .catch(() => ({ MediaListCollection: { lists: [] } }));
+
+  const trendingAnime: any = await rateLimitedRequest(GRAPHQL_QUERIES.TRENDING_ANIME, { page: 1, perPage: 10 })
+    .catch(() => ({ Page: { media: [] } }));
+
+  const recommendations: any = await rateLimitedRequest(GRAPHQL_QUERIES.RECOMMENDATIONS, { userId })
+    .catch(() => ({ User: { recommendations: { nodes: [] } } }));
 
   return {
     user: viewerData.Viewer,
-    activities: (activityData as any).Page.activities,
-    favoriteCharacters: (favoriteCharacters as any).User?.favourites?.characters?.nodes || [],
-    currentWatching: (currentWatching as any).MediaListCollection?.lists?.[0]?.entries || [],
-    trendingAnime: (trendingAnime as any).Page?.media || [],
-    recommendations: (recommendations as any).User?.recommendations?.nodes || [],
+    activities: activityData.Page?.activities || [],
+    favoriteCharacters: favoriteCharacters.User?.favourites?.characters?.nodes || [],
+    currentWatching: currentWatching.MediaListCollection?.lists?.[0]?.entries || [],
+    trendingAnime: trendingAnime.Page?.media || [],
+    recommendations: recommendations.User?.recommendations?.nodes || [],
   };
 }
 
@@ -108,15 +113,6 @@ export default async function Home() {
           <StatsCards stats={user.statistics} />
         </div>
 
-        {/* Quick Stats Row */}
-        <div className="animate-fade-in-up delay-100">
-          <QuickStats
-            animeCount={user.statistics.anime.count}
-            meanScore={user.statistics.anime.meanScore}
-            daysWatched={user.statistics.anime.minutesWatched / 1440}
-            genres={user.statistics.anime.genres || []}
-          />
-        </div>
 
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-4">
           {/* Left Column - Main Content */}
