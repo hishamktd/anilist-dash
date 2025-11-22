@@ -8,7 +8,7 @@ export const authOptions: NextAuthOptions = {
       type: "oauth",
       authorization: {
         url: "https://anilist.co/api/v2/oauth/authorize",
-        params: { scope: "oauth" },
+        params: { scope: "" },
       },
       token: "https://anilist.co/api/v2/oauth/token",
       userinfo: {
