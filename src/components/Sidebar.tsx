@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, List, User, Calendar, Tv, Menu, X } from "lucide-react";
+import { Home, List, User, Calendar, Tv, Menu, X, Trophy } from "lucide-react";
 import { clsx } from "clsx";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
@@ -12,6 +12,7 @@ const navItems = [
   { name: "My List", href: "/list", icon: List },
   { name: "Timeline", href: "/timeline", icon: Calendar },
   { name: "Schedule", href: "/schedule", icon: Tv },
+  { name: "Achievements", href: "/achievements", icon: Trophy },
 ];
 
 export function Sidebar() {

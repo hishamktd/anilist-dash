@@ -116,6 +116,13 @@ export const GRAPHQL_QUERIES = {
           large
         }
         bannerImage
+        favourites {
+          anime {
+            nodes {
+              id
+            }
+          }
+        }
         statistics {
           anime {
             count
@@ -424,6 +431,58 @@ export const GRAPHQL_QUERIES = {
               format
               status
               genres
+            }
+          }
+        }
+      }
+    }
+  `,
+  USER_ANIME_LIST: `
+    query UserAnimeList($userId: Int) {
+      MediaListCollection(userId: $userId, type: ANIME) {
+        lists {
+          name
+          status
+          entries {
+            id
+            status
+            score
+            progress
+            repeat
+            startedAt {
+              year
+              month
+              day
+            }
+            completedAt {
+              year
+              month
+              day
+            }
+            media {
+              id
+              title {
+                romaji
+                english
+              }
+              format
+              status
+              episodes
+              duration
+              seasonYear
+              startDate {
+                year
+                month
+                day
+              }
+              genres
+              countryOfOrigin
+              studios {
+                nodes {
+                  id
+                  name
+                }
+              }
             }
           }
         }
