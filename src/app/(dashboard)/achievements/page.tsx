@@ -150,7 +150,7 @@ async function getAchievementData(accessToken: string): Promise<UserAchievementS
 }
 
 export default async function AchievementsPage() {
-  const session = await getServerSession(authOptions);
+  const session: any = await getServerSession(authOptions);
 
   if (!session?.accessToken) {
     redirect("/login");
