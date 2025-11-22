@@ -1,0 +1,17 @@
+# robots.txt for AniList Dashboard
+
+User-agent: *
+Allow: /
+
+# Disallow authentication pages
+Disallow: /api/auth/
+Disallow: /login
+
+# Allow search engines to index public pages
+Allow: /$
+
+# Sitemap location
+Sitemap: ${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
