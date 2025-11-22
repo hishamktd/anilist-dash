@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Calendar } from "lucide-react";
 import type { MediaEntry } from "./types";
 import { useTimelineLogic } from "./hooks";
@@ -28,6 +28,31 @@ export function AnimeRoadmap({ entries }: AnimeRoadmapProps) {
     calculations,
     pixelsPerDay,
   } = useTimelineLogic({ entries });
+
+  // Scroll to show current date (today) on mount and when data changes
+  useEffect(() => {
+    if (timelineRef.current && filteredEntries.length > 0 && calculations.dateRange) {
+      // Delay scroll to ensure content is rendered
+      setTimeout(() => {
+        if (timelineRef.current && calculations.dateRange) {
+          const today = new Date();
+          const startDate = calculations.dateRange.start;
+          const endDate = calculations.dateRange.end;
+
+          // Calculate position of today
+          const totalDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+          const daysFromStart = (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+
+          // Calculate scroll position to center today on screen
+          const todayPosition = (daysFromStart / totalDays) * calculations.timelineWidth;
+          const containerWidth = timelineRef.current.clientWidth;
+
+          // Scroll so today is visible on the right side of the viewport
+          timelineRef.current.scrollLeft = todayPosition - containerWidth + 300;
+        }
+      }, 100);
+    }
+  }, [filteredEntries, zoomLevel, calculations.timelineWidth, calculations.dateRange]);
 
   if (filteredEntries.length === 0) {
     return <EmptyState />;

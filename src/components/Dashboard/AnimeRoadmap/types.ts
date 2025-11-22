@@ -50,7 +50,7 @@ export interface RowAssignments {
   totalRows: number;
 }
 
-export type ZoomLevel = "compact" | "normal" | "detailed" | "expanded";
+export type ZoomLevel = "compact" | "normal" | "detailed" | "expanded" | "by-days";
 
 export type StatusFilter = "all" | "CURRENT" | "COMPLETED";
 

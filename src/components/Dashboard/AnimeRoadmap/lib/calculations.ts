@@ -3,6 +3,7 @@ import {
   endOfMonth,
   eachMonthOfInterval,
   eachWeekOfInterval,
+  eachDayOfInterval,
   format,
 } from "date-fns";
 import type {
@@ -56,7 +57,10 @@ export function generateTimelineLabels(
 ): Date[] {
   if (!dateRange) return [];
 
-  if (zoomLevel === ZOOM_LEVELS.EXPANDED || zoomLevel === ZOOM_LEVELS.DETAILED) {
+  if (zoomLevel === ZOOM_LEVELS.BY_DAYS) {
+    // For "By Days" zoom, show every day
+    return eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
+  } else if (zoomLevel === ZOOM_LEVELS.EXPANDED || zoomLevel === ZOOM_LEVELS.DETAILED) {
     return eachWeekOfInterval({ start: dateRange.start, end: dateRange.end });
   } else {
     return eachMonthOfInterval({ start: dateRange.start, end: dateRange.end });
@@ -107,7 +111,9 @@ export function getWidthPx(
  * Format timeline label based on zoom level
  */
 export function formatTimelineLabel(date: Date, zoomLevel: ZoomLevel): string {
-  if (zoomLevel === ZOOM_LEVELS.EXPANDED || zoomLevel === ZOOM_LEVELS.DETAILED) {
+  if (zoomLevel === ZOOM_LEVELS.BY_DAYS) {
+    return format(date, "MMM d");
+  } else if (zoomLevel === ZOOM_LEVELS.EXPANDED || zoomLevel === ZOOM_LEVELS.DETAILED) {
     return format(date, "MMM d");
   }
   return format(date, "MMM yyyy");

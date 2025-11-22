@@ -42,6 +42,7 @@ export const ZOOM_LEVELS = {
   NORMAL: 'normal',
   DETAILED: 'detailed',
   EXPANDED: 'expanded',
+  BY_DAYS: 'by-days',
 } as const;
 
 /**
@@ -80,6 +81,14 @@ export const ZOOM_CONFIG: Record<string, ZoomLevelConfig> = {
     minWidthPx: 200,        // Largest items
     heightPx: 56,           // Tallest
     rowHeightPx: 68,        // Maximum row spacing
+  },
+  [ZOOM_LEVELS.BY_DAYS]: {
+    pixelsPerDay: 200,       // ~1500px per month - daily granularity
+    minDurationDays: 1,     // Single day minimum
+    paddingDays: 1,         // Minimal spacing (1 day)
+    minWidthPx: 200,         // Minimum one day width
+    heightPx: 56,           // Standard height
+    rowHeightPx: 68,        // Standard row spacing
   },
 } as const;
 
