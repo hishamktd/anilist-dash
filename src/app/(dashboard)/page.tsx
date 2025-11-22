@@ -17,6 +17,17 @@ import { NextEpisodeQueue } from "@/components/Dashboard/NextEpisodeQueue";
 import { GenreDonutChart } from "@/components/Dashboard/GenreDonutChart";
 import { RecommendationsWidget } from "@/components/Dashboard/RecommendationsWidget";
 import { TrendingAnimeBoard } from "@/components/Dashboard/TrendingAnimeBoard";
+import { WatchTimeStats } from "@/components/Dashboard/WatchTimeStats";
+import { CompletionRateWidget } from "@/components/Dashboard/CompletionRateWidget";
+import { VoiceActorWidget } from "@/components/Dashboard/VoiceActorWidget";
+import { AnimeLengthDistribution } from "@/components/Dashboard/AnimeLengthDistribution";
+import { SeasonalDistribution } from "@/components/Dashboard/SeasonalDistribution";
+import { AnimeMilestones } from "@/components/Dashboard/AnimeMilestones";
+import { ScoreComparison } from "@/components/Dashboard/ScoreComparison";
+import { StaffWidget } from "@/components/Dashboard/StaffWidget";
+import { MonthlyActivityChart } from "@/components/Dashboard/MonthlyActivityChart";
+import { QuickStats } from "@/components/Dashboard/QuickStats";
+import { LandingPage } from "@/components/LandingPage";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 async function getDashboardData(accessToken: string) {
@@ -31,7 +42,7 @@ async function getDashboardData(accessToken: string) {
     anilistClient.request(GRAPHQL_QUERIES.USER_ACTIVITY, {
       userId,
       page: 1,
-      perPage: 50,
+      perPage: 500,
     }),
     anilistClient.request(GRAPHQL_QUERIES.FAVORITE_CHARACTERS, { userId }).catch(() => ({ User: { favourites: { characters: { nodes: [] } } } })),
     anilistClient.request(GRAPHQL_QUERIES.CURRENT_WATCHING, { userId }).catch(() => ({ MediaListCollection: { lists: [] } })),
@@ -72,12 +83,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center space-y-4">
-        <h1 className="text-4xl font-bold text-white">Welcome to AniDash</h1>
-        <p className="text-gray-400">Please sign in to view your dashboard.</p>
-      </div>
-    );
+    return <LandingPage />;
   }
 
   // @ts-ignore
@@ -88,59 +94,116 @@ export default async function Home() {
     const heatmapData = processActivityForHeatmap(activities);
 
     return (
-      <div className="space-y-8">
-        <div>
-          <h2 className="text-3xl font-bold text-white">Welcome back, {user.name}</h2>
-          <p className="text-gray-400">Here's what's happening with your anime list.</p>
+      <div className="space-y-8 animate-fade-in-up">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="text-4xl font-bold text-white mb-2">
+              Welcome back, <span className="text-gradient">{user.name}</span>
+            </h2>
+            <p className="text-gray-400">Here's what's happening with your anime list.</p>
+          </div>
         </div>
 
-        <StatsCards stats={user.statistics} />
+        <div className="animate-fade-in-up delay-100">
+          <StatsCards stats={user.statistics} />
+        </div>
+
+        {/* Quick Stats Row */}
+        <div className="animate-fade-in-up delay-100">
+          <QuickStats
+            animeCount={user.statistics.anime.count}
+            meanScore={user.statistics.anime.meanScore}
+            daysWatched={user.statistics.anime.minutesWatched / 1440}
+            genres={user.statistics.anime.genres || []}
+          />
+        </div>
 
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-4">
           {/* Left Column - Main Content */}
           <div className="xl:col-span-3 space-y-8">
             {/* Next Episode Queue */}
             {currentWatching && currentWatching.length > 0 && (
-              <NextEpisodeQueue entries={currentWatching} />
+              <div className="animate-fade-in-up delay-200">
+                <NextEpisodeQueue entries={currentWatching} />
+              </div>
             )}
 
             {/* Favorite Characters */}
             {favoriteCharacters && favoriteCharacters.length > 0 && (
-              <FavoriteCharacters characters={favoriteCharacters} />
+              <div className="animate-fade-in-up delay-300">
+                <FavoriteCharacters characters={favoriteCharacters} />
+              </div>
             )}
 
             {/* Recommendations */}
             {recommendations && recommendations.length > 0 && (
-              <RecommendationsWidget recommendations={recommendations} />
+              <div className="animate-fade-in-up delay-300">
+                <RecommendationsWidget recommendations={recommendations} />
+              </div>
             )}
 
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            {/* New Premium Stats Widgets */}
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 animate-fade-in-up delay-400">
+              <WatchTimeStats
+                minutesWatched={user.statistics.anime.minutesWatched}
+                episodesWatched={user.statistics.anime.episodesWatched}
+              />
+              <CompletionRateWidget statuses={user.statistics.anime.statuses || []} />
+              <SeasonalDistribution years={user.statistics.anime.startYears || []} />
+            </div>
+
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-fade-in-up delay-400">
               <StatusOverview statuses={user.statistics.anime.statuses || []} />
               <FormatBreakdown formats={user.statistics.anime.formats || []} />
             </div>
 
-            <ActivityHeatmap data={heatmapData} />
+            <div className="animate-fade-in-up delay-400">
+              <ActivityHeatmap data={heatmapData} />
+            </div>
 
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-fade-in-up delay-500">
               <GenreDonutChart genres={user.statistics.anime.genres || []} />
               <GenreDistribution genres={user.statistics.anime.genres || []} />
             </div>
 
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-fade-in-up delay-500">
+              <AnimeLengthDistribution lengths={user.statistics.anime.lengths || []} />
+              <VoiceActorWidget voiceActors={user.statistics.anime.voiceActors || []} />
+            </div>
+
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-fade-in-up delay-500">
               <StudioDistribution studios={user.statistics.anime.studios || []} />
               <ScoreDistribution scores={user.statistics.anime.scores || []} />
             </div>
 
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-fade-in-up delay-500">
               <ReleaseYearChart years={user.statistics.anime.releaseYears || []} />
               <CountryDistribution countries={user.statistics.anime.countries || []} />
             </div>
 
-            <TagsCloud tags={user.statistics.anime.tags || []} />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-fade-in-up delay-600">
+              <StaffWidget staff={user.statistics.anime.staff || []} />
+              <ScoreComparison
+                genres={user.statistics.anime.genres || []}
+                userMeanScore={user.statistics.anime.meanScore || 0}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 animate-fade-in-up delay-600">
+              <AnimeMilestones
+                animeCount={user.statistics.anime.count}
+                episodesWatched={user.statistics.anime.episodesWatched}
+              />
+              <MonthlyActivityChart data={heatmapData} />
+            </div>
+
+            <div className="animate-fade-in-up delay-700">
+              <TagsCloud tags={user.statistics.anime.tags || []} />
+            </div>
           </div>
 
           {/* Right Column - Timeline & Trending */}
-          <div className="xl:col-span-1">
+          <div className="xl:col-span-1 animate-fade-in-up delay-300">
             <div className="sticky top-8 space-y-8">
               <Timeline items={activities} />
               {trendingAnime && trendingAnime.length > 0 && (
@@ -160,3 +223,4 @@ export default async function Home() {
     );
   }
 }
+

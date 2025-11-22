@@ -22,7 +22,7 @@ interface TimelineProps {
 
 export function Timeline({ items }: TimelineProps) {
   return (
-    <div className="rounded-xl bg-gray-900 p-6 shadow-sm border border-gray-800">
+    <div className="rounded-xl bg-gray-900 p-6 shadow-sm border border-gray-800 max-h-[2000px] min-h-[300px] overflow-y-auto">
       <h3 className="mb-4 text-lg font-semibold text-white">Recent Activity</h3>
       <div className="relative border-l border-gray-800 ml-3 space-y-8">
         {items.map((item) => (
