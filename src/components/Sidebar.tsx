@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, List, User, Calendar, Tv, Menu, X, Trophy } from "lucide-react";
+import { Home, List, User, Calendar, Tv, Menu, X, Trophy, Activity } from "lucide-react";
 import { clsx } from "clsx";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import { useState } from "react";
 const navItems = [
   { name: "Dashboard", href: "/", icon: Home },
   { name: "My List", href: "/list", icon: List },
+  { name: "Activity", href: "/activity", icon: Activity },
   { name: "Timeline", href: "/timeline", icon: Calendar },
   { name: "Schedule", href: "/schedule", icon: Tv },
   { name: "Achievements", href: "/achievements", icon: Trophy },
