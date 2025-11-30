@@ -43,7 +43,7 @@ export function useTimelineLogic({ entries }: UseTimelineLogicProps): UseTimelin
   const [selectedStatus, setSelectedStatus] = useState<StatusFilter>(
     STATUS_FILTERS.ALL as StatusFilter
   );
-  const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(ZOOM_LEVELS.NORMAL as ZoomLevel);
+  const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(ZOOM_LEVELS.BY_DAYS as ZoomLevel);
 
   // Process and normalize entries
   const timelineEntries = useMemo(() => {

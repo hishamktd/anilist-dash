@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { GRAPHQL_QUERIES, setAnilistToken, rateLimitedRequest } from "@/lib/anilist";
 import { DailyActivityCharts } from "@/components/Dashboard/DailyActivityCharts";
+import { EpisodesWatchedChart } from "@/components/Dashboard/EpisodesWatchedChart";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { LandingPage } from "@/components/LandingPage";
 
@@ -11,17 +12,37 @@ async function getActivityData(accessToken: string) {
   const viewerData: any = await rateLimitedRequest(GRAPHQL_QUERIES.VIEWER);
   const userId = viewerData.Viewer.id;
 
-  // Fetch activity data
-  // We can try to fetch a bit more if needed, but let's start with one large page
-  const activityData: any = await rateLimitedRequest(GRAPHQL_QUERIES.USER_ACTIVITY, {
+  // Fetch activity data - fetch multiple pages to get more historical data
+  const allActivities: any[] = [];
+  const maxPages = 20; // Fetch up to 20 pages (1000 activities) for better historical coverage
+  
+  for (let page = 1; page <= maxPages; page++) {
+    try {
+      const activityData: any = await rateLimitedRequest(GRAPHQL_QUERIES.USER_ACTIVITY, {
+        userId,
+        page,
+        perPage: 50,
+      });
+      
+      const activities = activityData.Page?.activities || [];
+      if (activities.length === 0) break; // No more activities
+      
+      allActivities.push(...activities);
+    } catch (error) {
+      console.error(`Error fetching page ${page}:`, error);
+      break;
+    }
+  }
+
+  // Fetch anime list to get actual episode progress
+  const animeListData: any = await rateLimitedRequest(GRAPHQL_QUERIES.USER_ANIME_LIST, {
     userId,
-    page: 1,
-    perPage: 500,
-  }).catch(() => ({ Page: { activities: [] } }));
+  }).catch(() => ({ MediaListCollection: { lists: [] } }));
 
   return {
     user: viewerData.Viewer,
-    activities: activityData.Page?.activities || [],
+    activities: allActivities,
+    animeList: animeListData.MediaListCollection?.lists || [],
   };
 }
 
@@ -36,7 +57,7 @@ export default async function ActivityPage() {
   const accessToken = session.accessToken;
 
   try {
-    const { user, activities } = await getActivityData(accessToken);
+    const { user, activities, animeList } = await getActivityData(accessToken);
 
     return (
       <div className="space-y-8 animate-fade-in-up">
@@ -48,6 +69,8 @@ export default async function ActivityPage() {
             <p className="text-gray-400">Detailed breakdown of your anime and manga interactions.</p>
           </div>
         </div>
+
+        <EpisodesWatchedChart activities={activities} animeList={animeList} />
 
         <DailyActivityCharts activities={activities} />
       </div>
